@@ -1,0 +1,5 @@
+fastapi=0.115.6
+pyjwt
+passlib[bcrypt]
+cffi=1.17.1
+sqlmodel=0.0.22

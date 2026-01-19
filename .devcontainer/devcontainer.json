@@ -1,0 +1,77 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+	"name": "Python",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"dockerFile": "Dockerfile",
+	"context": "..",
+	"remoteUser": "Yas",
+	"workspaceFolder": "/project",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/project,type=bind,consistency=delegated",
+    "runArgs": ["-h","Yas"],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"ms-python.vscode-pylance",
+				"ms-python.debugpy"
+	// 			"bierner.github-markdown-preview",
+	// 			"hnw.vscode-auto-open-markdown-preview",
+	// 			"DavidAnson.vscode-markdownlint",
+	// 			"donjayamanne.githistory",
+	// 			"GitHub.vscode-pull-request-github",
+	// 			"njpwerner.autodocstring",
+	// 			"redhat.vscode-yaml",
+	// 			"streetsidesoftware.code-spell-checker",
+	// 			"dbaeumer.vscode-eslint",
+	// 			"eamodio.gitlens",
+	// 			"esbenp.prettier-vscode"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {}
+	},
+	// "postCreateCommand": "bash setup.sh"
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "uname -a",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
+
+
+
+	// "customizations": {
+	// 	"vscode": {
+	// 		"extensions": [
+	// 			"ms-python.python",
+	// 			"ms-python.vscode-pylance",
+	// 			"bierner.github-markdown-preview",
+	// 			"hnw.vscode-auto-open-markdown-preview",
+	// 			"DavidAnson.vscode-markdownlint",
+	// 			"donjayamanne.githistory",
+	// 			"GitHub.vscode-pull-request-github",
+	// 			"njpwerner.autodocstring",
+	// 			"redhat.vscode-yaml",
+	// 			"streetsidesoftware.code-spell-checker",
+	// 			"dbaeumer.vscode-eslint",
+	// 			"eamodio.gitlens",
+	// 			"esbenp.prettier-vscode"
+	// 		]
+	// 	}
+	// },

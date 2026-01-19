@@ -1,0 +1,3 @@
+CRITICAL:2025-01-09 21:34:44,314:Host www.python.org unknown
+ERROR:2025-01-09 21:34:44,316:Couldn't find 'spam'
+WARNING:2025-01-09 21:34:44,317:Feature is deprecated
