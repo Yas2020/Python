@@ -1,3 +1,3 @@
 requests
-ipykernel
+ipykernel==6.29.0
 pyahocorasick

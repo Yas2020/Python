@@ -1,3 +1,7 @@
 {
-    "python.analysis.autoImportCompletions": false
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.extraPaths": ["./src"],
+    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "ruff.importStrategy": "fromEnvironment",
+    "remote.autoForwardPortsFallback": 0
 }

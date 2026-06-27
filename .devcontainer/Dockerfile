@@ -1,66 +1,60 @@
-# The Skills Network Cloud IDE uses Ubuntu 18.04 :(
-    FROM ubuntu:24.04
+# Define global arguments (can be overridden during build)
+ARG UBUNTU_VERSION=24.04
+ARG PYTHON_VERSION=3.13
+ARG USERNAME=Yas
 
-    ENV DEBIAN_FRONTEND=noninteractive
+FROM ubuntu:${UBUNTU_VERSION}
 
-    RUN apt-get update && \
-        apt-get install -y software-properties-common dirmngr apt-transport-https lsb-release ca-certificates && \
-        add-apt-repository ppa:deadsnakes
-        
+# Re-declare ARGs after FROM to make them available in this stage
+ARG PYTHON_VERSION
+ARG USERNAME
+ARG USER_UID=1001
+ARG USER_GID=$USER_UID
 
-    # Add any tools that are needed
-    RUN apt update && \
-        apt install -y sudo \
-            vim \
-            make \
-            git \
-            zip \
-            tree \
-            curl \
-            wget \
-            jq 
-            # redis-server
-    
-    # Install Python3.13 free-thresding (no-gil) as the default Python3 
-    RUN apt install -y python3.13-nogil
-    RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13t 1 && \
-        apt autoremove -y && \
-        apt clean -y
-    
-    # Create a user for development
-    ARG USERNAME=Yas
-    ARG USER_UID=1001
-    ARG USER_GID=$USER_UID
-    
-    # Create the user with passwordless sudo privileges
-    RUN groupadd --gid $USER_GID $USERNAME \
-        && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME -s /bin/bash \
-        && usermod -aG sudo $USERNAME \
-        && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-        && chmod 0440 /etc/sudoers.d/$USERNAME
-    
-    # Set up the Python development environment
-    WORKDIR /home/project
-    # install pip for defualt python runtime which is python3.13t
-    RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
-    RUN apt install -y gcc python3.13-dev
-    # Also install pip for the normal python3.13 (with gil) 
-    RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13
-    # RUN python3 -m pip install ipykernel --user --force-reinstall
-    # RUN /usr/bin/python3 -m pip install --upgrade pip && \
-        # /usr/bin/python3 -m pip install ipykernel --user --force-reinstall
-        # python3 -m pip install --upgrade pipenv virtualenv
-    # RUN python3 -m  pip install --upgrade pip && \
-    #     pip3 install --upgrade wheel 
+ENV DEBIAN_FRONTEND=noninteractive
 
-    # install redis docker container
-    # RUN docker run -d --name my-redis-stack -p 6379:6379  redis/redis-stack-server:latest
- 
-    ENV PORT 8000
-    EXPOSE $PORT
-    
-    # Enable color terminal for docker exec bash
-    ENV TERM=xterm-256color
-    
-    # Become a regular user
-    USER $USERNAME  
+# 1. Install prerequisites and PPA
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    ca-certificates \
+    curl \
+    git \
+    sudo \
+    && add-apt-repository ppa:deadsnakes/ppa -y
+
+# 2. Install Python versions dynamically
+# Use rm -rf /var/lib/apt/lists/* which is standard practice to keep Docker images lightweight.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-dev \
+    python${PYTHON_VERSION}-nogil \
+    vim make zip tree wget jq gcc libc6-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 3. Set the GIL version as the default 'python3'. 
+# Use --set flag to guarantee that /usr/bin/python3 points to the standard GIL version.
+# No-GIL binary is identified as python3.13t
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION}t 2 && \
+    update-alternatives --set python3 /usr/bin/python${PYTHON_VERSION}
+
+# 4. Install Pip for both (Standard and No-GIL)
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} && \
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION}t
+
+# 5. User Setup
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME -s /bin/bash \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+USER $USERNAME
+# Add the local pip bin folder to the system PATH
+ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
+WORKDIR /home/project
+
+# Install kernel for the specific version. Use --no-cache-dir when installing packages to prevent the image from bloating with temporary download files
+# RUN python3 -m pip install --no-cache-dir ipykernel
+
+ENV TERM=xterm-256color
+CMD ["sleep", "infinity"]

@@ -12,31 +12,56 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				// The Core
 				"ms-python.python",
-				"ms-toolsai.jupyter",
 				"ms-python.vscode-pylance",
-				"ms-python.debugpy"
-	// 			"bierner.github-markdown-preview",
-	// 			"hnw.vscode-auto-open-markdown-preview",
-	// 			"DavidAnson.vscode-markdownlint",
-	// 			"donjayamanne.githistory",
-	// 			"GitHub.vscode-pull-request-github",
-	// 			"njpwerner.autodocstring",
-	// 			"redhat.vscode-yaml",
-	// 			"streetsidesoftware.code-spell-checker",
-	// 			"dbaeumer.vscode-eslint",
-	// 			"eamodio.gitlens",
-	// 			"esbenp.prettier-vscode"
+				"ms-python.debugpy",
+				"ms-toolsai.jupyter",
+				
+				// Linting & Formatting (The New Standards)
+				"charliermarsh.ruff", 
+				"ms-python.black-formatter",
+				
+				// Environment & Config
+				"tamasfe.even-better-toml",
+				"redhat.vscode-yaml",
+				
+				// Quality of Life
+				"njpwerner.autodocstring",
+				"KevinRose.vsc-python-indent",
+				"streetsidesoftware.code-spell-checker"
 			]
 		}
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/git:1": {},
+		// 1. Better Docker handling (Shares your host's Docker)
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"version": "latest",
+			"enableNonRootDocker": "true"
+		},
+		// 2. Pro Shell Setup (Includes ZSH, Git, and common CLI tools)
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"username": "Yas",
+			"upgradePackages": true
+		},
+		// 3. GitHub CLI for managing PRs/Repos
 		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {}
+		// 4. Your existing ZSH plugins
+		"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {
+			"plugins": "git zsh-autosuggestions zsh-syntax-highlighting",
+			"theme": "robbyrussell"
+		}
 	},
-	// "postCreateCommand": "bash setup.sh"
+	// "features": {
+	// 	"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+	// 	"ghcr.io/devcontainers/features/git:1": {},
+	// 	"ghcr.io/devcontainers/features/github-cli:1": {},
+	// 	"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {}
+	// },
+
+    "postCreateCommand": "bash .devcontainer/setup.sh"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
